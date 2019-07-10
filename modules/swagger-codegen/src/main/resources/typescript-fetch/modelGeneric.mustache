@@ -19,17 +19,15 @@ export interface {{classname}} {{#parent}}extends {{{parent}}} {{/parent}}{
 }{{#hasEnums}}
 
 /**
- * @export
- * @namespace {{classname}}
+ * Enum workaround as namespaces are not supported
  */
-export namespace {{classname}} {
 {{#vars}}
     {{#isEnum}}
     /**
      * @export
      * @enum {string}
      */
-    export enum {{enumName}} {
+    export enum {{classname}}{{enumName}} {
     {{#allowableValues}}
         {{#enumVars}}
         {{{name}}} = <any> {{{value}}}{{^-last}},{{/-last}}
@@ -38,4 +36,4 @@ export namespace {{classname}} {
     }
     {{/isEnum}}
 {{/vars}}
-}{{/hasEnums}}
+{{/hasEnums}}

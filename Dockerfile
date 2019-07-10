@@ -1,7 +1,4 @@
-FROM jimschubert/8-jdk-alpine-mvn:1.0
-
-RUN set -x && \
-    apk add --no-cache bash
+FROM maven:3-jdk-8-slim
 
 ENV GEN_DIR /opt/swagger-codegen
 WORKDIR ${GEN_DIR}
@@ -18,10 +15,14 @@ COPY ./google_checkstyle.xml ${GEN_DIR}
 COPY ./modules/swagger-codegen-maven-plugin ${GEN_DIR}/modules/swagger-codegen-maven-plugin
 COPY ./modules/swagger-codegen-cli ${GEN_DIR}/modules/swagger-codegen-cli
 COPY ./modules/swagger-codegen ${GEN_DIR}/modules/swagger-codegen
+COPY ./modules/swagger-generator ${GEN_DIR}/modules/swagger-generator
 COPY ./pom.xml ${GEN_DIR}
 
 # Pre-compile swagger-codegen-cli
 RUN mvn -am -pl "modules/swagger-codegen-cli" package
+
+# copy to workdir
+RUN cp /opt/swagger-codegen/modules/swagger-codegen-cli/target/swagger-codegen-cli.jar ${GEN_DIR}/swagger-codegen-cli.jar
 
 # This exists at the end of the file to benefit from cached layers when modifying docker-entrypoint.sh.
 COPY docker-entrypoint.sh /usr/local/bin/
